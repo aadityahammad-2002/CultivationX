@@ -25,11 +25,11 @@ jobs:
           distribution: 'corretto'
           cache: 'maven'
 
-      # ===== Build Backend =====
+      # ===== Build Backend (Lombok Fix) =====
       - name: Build Backend
         run: |
           cd backend
-          mvn clean package -DskipTests    # ✅ Changed: mvnw → mvn
+          mvn clean package -DskipTests -Dproject.build.sourceEncoding=UTF-8
 
       # ===== Node Setup =====
       - name: Set up Node.js
