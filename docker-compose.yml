@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # MySQL Database
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: cultivationx-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: cultivationx
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - cultivationx-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==========================================
+  # Backend (Spring Boot)
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cultivationx-backend
+    restart: unless-stopped
+    environment:
+      # Database
+      DB_URL: jdbc:mysql://mysql:3306/cultivationx?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      
+      # AI APIs
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      
+      # GitHub
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      
+      # CORS
+      CORS_ORIGINS: http://localhost,http://localhost:80
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - cultivationx-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ==========================================
+  # Frontend (React/Vue)
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cultivationx-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - cultivationx-network
+
+  # ==========================================
+  # Nginx Reverse Proxy (Optional)
+  # ==========================================
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: cultivationx-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #   networks:
+  #     - cultivationx-network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  mysql-data:
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  cultivationx-network:
+    driver: bridge

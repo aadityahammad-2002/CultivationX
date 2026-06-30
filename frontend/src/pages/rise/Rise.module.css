@@ -1,0 +1,13 @@
+.scoreBar 
+{ 
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+}
+.scoreBarLabel 
+{ 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 13px; 
+    color: var(--text-secondary); 
+}
