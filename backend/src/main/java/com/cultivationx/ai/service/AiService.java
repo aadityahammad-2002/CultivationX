@@ -349,6 +349,10 @@ public class AiService {
                     .content();
 
             // Strip markdown code fences if present
+            // Add null check
+        if (response == null) {
+            throw new IllegalStateException("AI response is null");
+        }
             String cleaned = response.trim();
             if (cleaned.startsWith("```json")) {
                 cleaned = cleaned.substring(7);
