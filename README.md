@@ -149,6 +149,48 @@ docker-compose up --build
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/dashboard.png" width="32%" alt="Dashboard" />
+  <img src="screenshots/rise-upload.png" width="32%" alt="Rise Upload" />
+  <img src="screenshots/rise-analysis.png" width="32%" alt="Rise Analysis" />
+</p>
+
+<p align="center">
+  <img src="screenshots/rise-skills.png" width="32%" alt="Rise Skills" />
+  <img src="screenshots/rise-gap.png" width="32%" alt="Rise Gap Analysis" />
+  <img src="screenshots/rise-roadmap.png" width="32%" alt="Rise Roadmap" />
+</p>
+
+<p align="center">
+  <img src="screenshots/rise-history.png" width="32%" alt="Rise History" />
+  <img src="screenshots/mentor-chat.png" width="32%" alt="Mentor AI Chat" />
+  <img src="screenshots/mentor-review.png" width="32%" alt="Mentor Code Review" />
+</p>
+
+<p align="center">
+  <img src="screenshots/mentor-history.png" width="32%" alt="Mentor History" />
+  <img src="screenshots/nexus-overview.png" width="32%" alt="Nexus Overview" />
+  <img src="screenshots/nexus-github.png" width="32%" alt="Nexus GitHub" />
+</p>
+
+<p align="center">
+  <img src="screenshots/nexus-leetcode.png" width="32%" alt="Nexus LeetCode" />
+  <img src="screenshots/nexus-leetgit.png" width="32%" alt="Nexus LeetGit" />
+  <img src="screenshots/devdna-overview.png" width="32%" alt="DevDNA Overview" />
+</p>
+
+<p align="center">
+  <img src="screenshots/devdna-skills.png" width="32%" alt="DevDNA Skills" />
+  <img src="screenshots/devdna-analytics.png" width="32%" alt="DevDNA Analytics" />
+  <img src="screenshots/devdna-insights.png" width="32%" alt="DevDNA Insights" />
+</p>
+
+<p align="center">
+  <img src="screenshots/devdna-reports.png" width="32%" alt="DevDNA Reports" />
+</p>
+
 ## Notes
 
 - LeetGit+ sync is manual (LeetCode has no webhooks)
