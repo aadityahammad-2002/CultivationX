@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,9 +27,26 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    private SecretKey getSigningKey() {
+    private SecretKey signingKey;
+
+    @PostConstruct
+    public void init() {
+        log.info("Loaded JWT secret length: {} characters", secret.length());
+        
+        // Ensure minimum 32 bytes for HS256
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+        if (keyBytes.length < 32) {
+            throw new IllegalArgumentException(
+                "JWT secret must be at least 32 bytes (256 bits). Current: " + keyBytes.length + " bytes"
+            );
+        }
+        
+        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        log.info("JWT signing key initialized successfully");
+    }
+
+    private SecretKey getSigningKey() {
+        return signingKey;
     }
 
     public String generateToken(UserDetails userDetails) {

@@ -26,37 +26,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+protected void doFilterInternal(
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
+) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+    final String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        final String jwt = authHeader.substring(7);
         try {
-            final String jwt = authHeader.substring(7);
             final String userEmail = jwtUtil.extractUsername(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
                 if (jwtUtil.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, null, userDetails.getAuthorities()
+                            );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
             log.warn("JWT authentication failed: {}", e.getMessage());
+            // Don’t rethrow — just continue
         }
-
-        filterChain.doFilter(request, response);
     }
+
+    filterChain.doFilter(request, response);
+}
 }

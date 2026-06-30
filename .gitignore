@@ -47,22 +47,25 @@ frontend/out/
 # ============================================
 # SENSITIVE FILES - NEVER COMMIT!
 # ============================================
-# Environment files
+
+# Environment files with real secrets
 .env
-.env.*
+.env.local
+.env.production
 *.env
 backend/.env
 frontend/.env
 
-# Application config with real values
-src/main/resources/application.yml
-src/main/resources/application-*.yml
-!src/main/resources/application-example.yml
+# ALLOW example template
+!.env.example
+
+# Profile-specific configs with real secrets
 src/main/resources/application-local.yml
 src/main/resources/application-prod.yml
-backend/src/main/resources/application.yml
-backend/src/main/resources/application-*.yml
-!backend/src/main/resources/application-example.yml
+src/main/resources/application-dev.yml
+backend/src/main/resources/application-local.yml
+backend/src/main/resources/application-prod.yml
+backend/src/main/resources/application-dev.yml
 
 # API Keys & Secrets
 *.key

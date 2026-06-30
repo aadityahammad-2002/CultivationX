@@ -12,7 +12,6 @@ import com.cultivationx.mentor.repository.ChatConversationRepository;
 import com.cultivationx.mentor.repository.ChatMessageRepository;
 import com.cultivationx.mentor.repository.CodeReviewRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
