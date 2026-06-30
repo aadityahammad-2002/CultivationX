@@ -5,7 +5,7 @@
 [![Docker](https://img.shields.io/badge/Docker-✓-2496ED.svg)](https://docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-&gt; **AI-Powered Resume Analysis & Career Growth Platform**
+&gt; **AI-Powered Developer Career Growth Platform**
 
 CultivationX helps developers analyze their resumes, identify skill gaps, track coding progress (GitHub + LeetCode), and get AI-powered mentorship — all in one place.
 
