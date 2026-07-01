@@ -1,0 +1,80 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: CultivationX
+
+  # ===== H2 DATABASE (Production) =====
+  datasource:
+    url: jdbc:h2:mem:cultivationx;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  # ===== JPA =====
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  # ===== FILE UPLOAD =====
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # ===== SPRING AI =====
+  ai:
+    openai:
+      api-key: ${GROQ_API_KEY}
+      base-url: https://api.groq.com/openai
+      chat:
+        options:
+          model: llama-3.3-70b-versatile
+          temperature: 0.7
+          max-tokens: 4096
+
+# ===== JWT =====
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+# ===== APP CONFIG =====
+app:
+  resume:
+    upload-dir: ./uploads/resumes
+    max-size-mb: 10
+    allowed-types:
+      - application/pdf
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  github:
+    api-base-url: https://api.github.com
+    oauth-client-id: ${GITHUB_CLIENT_ID}
+    oauth-client-secret: ${GITHUB_CLIENT_SECRET}
+  leetcode:
+    graphql-url: https://leetcode.com/graphql
+    api-base-url: https://leetcode.com
+  scheduling:
+    sync-cron: "0 0 */6 * * *"
+    cleanup-cron: "0 0 3 1 * *"
+    devdna-cron: "0 0 0 * * SUN"
+
+# ===== LOGGING =====
+logging:
+  level:
+    com.cultivationx: DEBUG
+    org.springframework.ai: INFO
+    org.springframework.security: WARN
+
+# ===== CORS =====
+cors:
+  allowed-origins: ${CORS_ORIGINS}
