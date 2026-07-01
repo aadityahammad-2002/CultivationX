@@ -41,17 +41,7 @@ export function NexusPage() {
   const [detecting, setDetecting] = useState(false);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    if (code) {
-      window.history.replaceState({}, document.title, '/nexus');
-      nexusApi.connectGitHub(code)
-        .then(res => {
-          if (res.data) { setGithub(res.data); toast.success('GitHub connected successfully!'); }
-        })
-        .catch(() => toast.error('GitHub connection failed'));
-    }
-
+    
     Promise.all([
       nexusApi.getGitHub().then(r => r.data && setGithub(r.data)).catch(() => {}),
       nexusApi.getLeetCode().then(r => r.data && setLeetcode(r.data)).catch(() => {}),
@@ -193,38 +183,38 @@ export function NexusPage() {
         <div className="fade-in">
           <div className="grid-3">
             {/* GitHub card */}
-            <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <span style={{ fontSize: 28 }}>⚙️</span>
-                <div>
-                  <h4 style={{ color: 'var(--text-primary)' }}>GitHub</h4>
-                  <span className={`badge ${github?.connected ? 'badge-success' : 'badge-error'}`}>{github?.connected ? 'Connected' : 'Not Connected'}</span>
-                </div>
-              </div>
-              {github?.connected ? (
-                <>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>@{github.username} · Last sync: {github.lastSyncAt ? new Date(github.lastSyncAt).toLocaleString() : 'Never'}</p>
-                  <div className="grid-2" style={{ gap: 8, marginBottom: 12 }}>
-                    {[['Repos', github.publicRepos], ['Stars', github.totalStars], ['Followers', github.followers], ['Following', github.following]].map(([l, v]) => (
-                      <div key={l as string} style={{ textAlign: 'center', padding: '8px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
-                        <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{v ?? 0}</div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{l}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <button className="btn btn-secondary btn-sm btn-full" onClick={syncGitHub} disabled={syncing.github}>
-                    {syncing.github ? <><span className="spinner" /> Syncing...</> : '🔄 Sync Now'}
-                  </button>
-                </>
-              ) : (
-                <div>
-                  <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>Connect GitHub to sync your repositories and contribution data</p>
-                  <a href={`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&scope=repo,user`} className="btn btn-primary btn-sm btn-full">
-                    Connect GitHub
-                  </a>
-                </div>
-              )}
-            </div>
+<div className="card">
+  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+    <span style={{ fontSize: 28 }}>⚙️</span>
+    <div>
+      <h4 style={{ color: 'var(--text-primary)' }}>GitHub</h4>
+      <span className={`badge ${github?.connected ? 'badge-success' : 'badge-error'}`}>{github?.connected ? 'Connected' : 'Not Connected'}</span>
+    </div>
+  </div>
+  {github?.connected ? (
+    <>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>@{github.username} · Last sync: {github.lastSyncAt ? new Date(github.lastSyncAt).toLocaleString() : 'Never'}</p>
+      <div className="grid-2" style={{ gap: 8, marginBottom: 12 }}>
+        {[['Repos', github.publicRepos], ['Stars', github.totalStars], ['Followers', github.followers], ['Following', github.following]].map(([l, v]) => (
+          <div key={l as string} style={{ textAlign: 'center', padding: '8px', background: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
+            <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{v ?? 0}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{l}</div>
+          </div>
+        ))}
+      </div>
+      <button className="btn btn-secondary btn-sm btn-full" onClick={syncGitHub} disabled={syncing.github}>
+        {syncing.github ? <><span className="spinner" /> Syncing...</> : '🔄 Sync Now'}
+      </button>
+    </>
+  ) : (
+    <div>
+      <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 12 }}>Connect GitHub to sync your repositories and contribution data</p>
+      <button className="btn btn-primary btn-sm btn-full" onClick={() => window.location.href = '/settings'}>
+        Connect GitHub
+      </button>
+    </div>
+  )}
+</div>
 
             {/* LeetCode card */}
             <div className="card">
