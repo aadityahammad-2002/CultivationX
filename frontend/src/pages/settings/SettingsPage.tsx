@@ -30,6 +30,10 @@ export function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [disconnecting, setDisconnecting] = useState({ github: false, leetcode: false });
 
+  // GitHub PAT states
+  const [githubToken, setGithubToken] = useState('');
+  const [connectingGithub, setConnectingGithub] = useState(false);
+
   const [profile, setProfile] = useState({
     name: user?.name || '',
     bio: user?.bio || '',
@@ -69,6 +73,26 @@ export function SettingsPage() {
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to change password');
     } finally { setSaving(false); }
+  };
+
+  // GitHub connect with PAT
+  const connectGitHubWithToken = async () => {
+    if (!githubToken.trim()) {
+      toast.error('Please enter GitHub token');
+      return;
+    }
+    setConnectingGithub(true);
+    try {
+      await nexusApi.connectGitHubWithToken(githubToken.trim());
+      toast.success('GitHub connected!');
+      setGithubToken('');
+      const res = await authApi.getMe();
+      if (res) updateUser(res);
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || 'Failed to connect GitHub');
+    } finally {
+      setConnectingGithub(false);
+    }
   };
 
   const disconnectGitHub = async () => {
@@ -214,7 +238,7 @@ export function SettingsPage() {
           <div className="card">
             <h3 className="card-title" style={{ marginBottom: 20 }}>Connected Platforms</h3>
 
-            {/* GitHub */}
+            {/* GitHub with PAT */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 0', borderBottom: '1px solid var(--border)' }}>
               <span style={{ fontSize: 28 }}>⚙️</span>
               <div style={{ flex: 1 }}>
@@ -228,9 +252,27 @@ export function SettingsPage() {
                   {disconnecting.github ? <span className="spinner" /> : 'Disconnect'}
                 </button>
               ) : (
-                <a href={`https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID || ''}&scope=repo,user`} className="btn btn-primary btn-sm">
-                  Connect
-                </a>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 250 }}>
+                  <input
+                    type="password"
+                    className="input input-sm"
+                    placeholder="GitHub Personal Access Token"
+                    value={githubToken}
+                    onChange={e => setGithubToken(e.target.value)}
+                    style={{ fontSize: 12 }}
+                  />
+                  <p style={{ margin: 0, fontSize: 11, color: 'var(--text-muted)' }}>
+                    Create at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a>
+                    <br/>Scopes: <code>repo</code>, <code>read:user</code>
+                  </p>
+                  <button 
+                    className="btn btn-primary btn-sm" 
+                    onClick={connectGitHubWithToken}
+                    disabled={connectingGithub}
+                  >
+                    {connectingGithub ? <><span className="spinner" /> Connecting...</> : 'Connect'}
+                  </button>
+                </div>
               )}
             </div>
 
