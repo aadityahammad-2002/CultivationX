@@ -40,28 +40,24 @@ public class GitHubService {
     private String clientSecret;
 
     @Transactional
-    public NexusDto.GitHubProfileResponse connectWithOAuth(String email, String code) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> AppException.userNotFound(email));
+    public NexusDto.GitHubProfileResponse connectWithToken(String email, String token) {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> AppException.userNotFound(email));
 
-        // Exchange code for access token
-        String accessToken = exchangeCodeForToken(code);
+    // Validate token by calling GitHub API
+    Map<String, Object> githubUser = fetchGitHubUser(token);
+    String username = toString(githubUser.get("login"));
 
-        // Fetch GitHub user profile
-        Map<String, Object> githubUser = fetchGitHubUser(accessToken);
+    // Update user
+    user.setGithubUsername(username);
+    user.setGithubAccessToken(token);
+    user.setGithubConnected(true);
+    user.setGithubConnectedAt(LocalDateTime.now());
+    userRepository.save(user);
 
-        String username = toString(githubUser.get("login"));
-
-        // Update user entity
-        user.setGithubUsername(username);
-        user.setGithubAccessToken(accessToken);
-        user.setGithubConnected(true);
-        user.setGithubConnectedAt(LocalDateTime.now());
-        userRepository.save(user);
-
-        // Fetch and store full profile
-        return syncProfile(user, accessToken, githubUser);
-    }
+    // Sync profile
+    return syncProfile(user, token, githubUser);
+}
 
     @Transactional
     public NexusDto.GitHubProfileResponse syncGitHub(String email) {
