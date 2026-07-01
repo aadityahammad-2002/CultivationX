@@ -47,7 +47,7 @@ export function SettingsPage() {
     setSaving(true);
     try {
       const res = await authApi.updateProfile(profile);
-      if (res.data) { updateUser(res.data); toast.success('Profile updated!'); }
+      if (res) { updateUser(res); toast.success('Profile updated!'); }
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to update profile');
     } finally { setSaving(false); }
@@ -77,7 +77,7 @@ export function SettingsPage() {
       await nexusApi.disconnectGitHub();
       toast.success('GitHub disconnected');
       const res = await authApi.getMe();
-      if (res.data) updateUser(res.data);
+      if (res) updateUser(res);
     } catch { toast.error('Failed to disconnect'); }
     finally { setDisconnecting(d => ({ ...d, github: false })); }
   };
@@ -88,7 +88,7 @@ export function SettingsPage() {
       await nexusApi.disconnectLeetCode();
       toast.success('LeetCode disconnected');
       const res = await authApi.getMe();
-      if (res.data) updateUser(res.data);
+      if (res) updateUser(res);
     } catch { toast.error('Failed to disconnect'); }
     finally { setDisconnecting(d => ({ ...d, leetcode: false })); }
   };
