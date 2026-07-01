@@ -52,7 +52,7 @@ jwt:
 
 app:
   resume:
-    upload-dir: ./uploads/resumes
+    upload-dir: /tmp/cultivationx/resumes
     max-size-mb: 10
     allowed-types:
       - application/pdf
