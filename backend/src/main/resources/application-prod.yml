@@ -7,17 +7,17 @@ spring:
   application:
     name: CultivationX
 
-  # ===== H2 DATABASE =====
   datasource:
-    url: jdbc:h2:mem:cultivationx
+    url: jdbc:h2:mem:cultivationx;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
 
   jpa:
     hibernate:
-      ddl-auto: none        # ← Hibernate band
+      ddl-auto: none
     show-sql: true
+    defer-datasource-initialization: true   # ← ADD THIS LINE
 
   h2:
     console:
@@ -26,17 +26,15 @@ spring:
 
   sql:
     init:
-      mode: always          # ← SQL scripts chalao
-      schema-locations: classpath:schema.sql   # ← direct resources ke andar
+      mode: always
+      schema-locations: classpath:schema.sql
 
-  # ===== FILE UPLOAD =====
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
 
-  # ===== SPRING AI =====
   ai:
     openai:
       api-key: ${GROQ_API_KEY}
@@ -47,13 +45,11 @@ spring:
           temperature: 0.7
           max-tokens: 4096
 
-# ===== JWT =====
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000
   refresh-expiration: 604800000
 
-# ===== APP CONFIG =====
 app:
   resume:
     upload-dir: ./uploads/resumes
@@ -69,6 +65,5 @@ app:
     graphql-url: https://leetcode.com/graphql
     api-base-url: https://leetcode.com
 
-# ===== CORS =====
 cors:
   allowed-origins: ${CORS_ORIGINS}
