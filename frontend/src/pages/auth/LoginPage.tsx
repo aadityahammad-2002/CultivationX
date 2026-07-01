@@ -30,7 +30,7 @@ export function LoginPage() {
       if (res) {
         login(res.token, res.user);
         toast.success('Welcome back!');
-        navigate(res.data.user.setupComplete ? '/dashboard' : '/setup');
+        navigate(res.user.setupComplete ? '/dashboard' : '/setup');
       }
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Login failed');
