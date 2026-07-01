@@ -24,11 +24,18 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
+public AuthDto.AuthResponse register(AuthDto.RegisterRequest request) {
+    log.info("=== REGISTER START ===");
+    log.info("Name: {}, Email: {}", request.getName(), request.getEmail());
+    
+    try {
+        log.info("Checking if email exists...");
         if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Email already exists: {}", request.getEmail());
             throw AppException.emailAlreadyExists(request.getEmail());
         }
-
+        
+        log.info("Creating user...");
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
@@ -36,15 +43,26 @@ public class AuthService {
                 .setupComplete(false)
                 .build();
 
+        log.info("Saving user...");
         user = userRepository.save(user);
-        log.info("New user registered: {}", user.getEmail());
-
+        log.info("User saved with ID: {}", user.getId());
+        
+        log.info("Generating JWT token...");
         String token = jwtUtil.generateToken(user);
+        log.info("Token generated");
+        
         return AuthDto.AuthResponse.builder()
                 .token(token)
                 .user(AuthDto.UserResponse.from(user))
                 .build();
+    } catch (AppException e) {
+        log.error("AppException: {}", e.getMessage());
+        throw e;
+    } catch (Exception e) {
+        log.error("UNEXPECTED ERROR in register: ", e);
+        throw e;
     }
+}
 
     public AuthDto.AuthResponse login(AuthDto.LoginRequest request) {
         authenticationManager.authenticate(
