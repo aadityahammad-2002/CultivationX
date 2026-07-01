@@ -48,8 +48,8 @@ export function SetupPage() {
         leetcodeUsername: form.leetcodeUsername || undefined,
         bio: form.bio || undefined,
       });
-      if (res.data) {
-        updateUser(res.data);
+      if (res) {
+        updateUser(res);
         toast.success('Profile setup complete! 🎉');
         navigate('/dashboard');
       }
