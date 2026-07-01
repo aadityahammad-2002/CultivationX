@@ -29,16 +29,23 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-   @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth -> auth
-            .anyRequest().permitAll()  // Sab permit
-        );
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> 
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // ← Stateless session
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()  // ← Public
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // ← CORS preflight
+                .anyRequest().authenticated()  // ← 🔴 Baaki sab protected!
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);  // ← 🔴 JWT filter add!
 
-    return http.build();
-}
+        return http.build();
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
