@@ -24,14 +24,15 @@ public class NexusController {
     private final LeetGitService leetGitService;
 
     // ===== GITHUB =====
-    @PostMapping("/github/connect")
-    public ResponseEntity<ApiResponse<NexusDto.GitHubProfileResponse>> connectGitHub(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @Valid @RequestBody NexusDto.GitHubConnectRequest request) {
-        NexusDto.GitHubProfileResponse response = gitHubService.connectWithOAuth(
-                userDetails.getUsername(), request.getCode());
-        return ResponseEntity.ok(ApiResponse.success("GitHub connected successfully", response));
-    }
+    @PostMapping("/github/token")
+public ResponseEntity<ApiResponse<NexusDto.GitHubProfileResponse>> connectGitHubWithToken(
+        @AuthenticationPrincipal UserDetails userDetails,
+        @RequestBody Map<String, String> request) {
+    String token = request.get("token");
+    NexusDto.GitHubProfileResponse response = gitHubService.connectWithToken(
+            userDetails.getUsername(), token);
+    return ResponseEntity.ok(ApiResponse.success("GitHub connected successfully", response));
+}
 
     @GetMapping("/github")
     public ResponseEntity<ApiResponse<NexusDto.GitHubProfileResponse>> getGitHubProfile(
