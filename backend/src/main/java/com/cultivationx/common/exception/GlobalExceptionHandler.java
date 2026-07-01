@@ -19,13 +19,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAppException(AppException ex) {
-        log.error("AppException [{}]: {}", ex.getCode(), ex.getMessage());
-        return ResponseEntity
-                .status(ex.getStatus())
-                .body(ApiResponse.error(ex.getMessage()));
-    }
+    @ExceptionHandler(Exception.class)
+public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+    log.error("UNEXPECTED ERROR: {} - {}", ex.getClass().getName(), ex.getMessage(), ex);
+    return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.error(ex.getClass().getSimpleName() + ": " + ex.getMessage()));
+}
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
