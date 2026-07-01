@@ -2,7 +2,7 @@ import client from './client';
 import type { ApiResponse, GitHubProfileResponse, LeetCodeProfileResponse, LeetGitStats, LeetGitSyncResponse } from '../types';
 
 export const nexusApi = {
-  connectGitHub: (code: string) =>
+  connectGitHub: (code: string) => 
     client.post<ApiResponse<GitHubProfileResponse>>('/nexus/github/token', { token }).then(r => r.data),
   getGitHub: () =>
     client.get<ApiResponse<GitHubProfileResponse>>('/nexus/github').then(r => r.data),
