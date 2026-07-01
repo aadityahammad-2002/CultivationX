@@ -53,7 +53,8 @@ public class User implements UserDetails {
     private boolean setupComplete = false;
 
     private String targetCompany;
-    private String currentRole;
+    @Column(name = "current_job_role")
+private String currentRole;
     private Integer yearsOfExperience;
 
     // ===== GITHUB INTEGRATION (Nexus) =====
