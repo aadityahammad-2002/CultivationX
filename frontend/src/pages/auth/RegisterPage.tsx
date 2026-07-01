@@ -27,8 +27,8 @@ export function RegisterPage() {
     setLoading(true);
     try {
       const res = await authApi.register(form);
-      if (res.data) {
-        login(res.data.token, res.data.user);
+      if (res) {
+        login(res.token, res.user);
         toast.success('Account created! Let\'s set up your profile.');
         navigate('/setup');
       }
