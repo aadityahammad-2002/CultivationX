@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedToken) {
       setToken(storedToken);
       authApi.getMe()
-        .then(res => { if (res.data) setUser(res.data); })
+        .then(res => { if (res) setUser(res); })
         .catch(() => { localStorage.removeItem('cx_token'); })
         .finally(() => setIsLoading(false));
     } else {
