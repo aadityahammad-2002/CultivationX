@@ -27,8 +27,8 @@ export function LoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form);
-      if (res.data) {
-        login(res.data.token, res.data.user);
+      if (res) {
+        login(res.token, res.user);
         toast.success('Welcome back!');
         navigate(res.data.user.setupComplete ? '/dashboard' : '/setup');
       }
